@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 )
 
+// AWS - AWS parameters
 type AWS struct {
 	key    string
 	secret string
