@@ -13,8 +13,8 @@ import (
 const namespaceSecret = "/var/run/secrets/kubernetes.io/serviceaccount/namespace"
 
 var (
-	ClientBuilder func() (kubernetes.Interface, error) = concretBuilder
-	ReadFile      func(string) ([]byte, error)         = ioutil.ReadFile
+	clientBuilder func() (kubernetes.Interface, error) = concretBuilder
+	readFile      func(string) ([]byte, error)         = ioutil.ReadFile
 )
 
 func concretBuilder() (kubernetes.Interface, error) {
@@ -25,8 +25,9 @@ func concretBuilder() (kubernetes.Interface, error) {
 	return kubernetes.NewForConfig(k8sConfig)
 }
 
+// GetConfigMapData - Get Configmap data
 func GetConfigMapData(namespace, configmap string) (map[string]string, error) {
-	kc, err := ClientBuilder()
+	kc, err := clientBuilder()
 	if err != nil {
 		return nil, err
 	}
@@ -37,8 +38,9 @@ func GetConfigMapData(namespace, configmap string) (map[string]string, error) {
 	return cm.Data, nil
 }
 
+// WatchConfigMap - Watch ConfigMap
 func WatchConfigMap(namespace string) (<-chan error, error) {
-	kc, err := ClientBuilder()
+	kc, err := clientBuilder()
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +63,8 @@ func WatchConfigMap(namespace string) (<-chan error, error) {
 	return c, nil
 }
 
+// GetCurrentNamespace - Get the current Namespace
 func GetCurrentNamespace() (string, error) {
-	ns, err := ReadFile(namespaceSecret)
+	ns, err := readFile(namespaceSecret)
 	return string(ns), err
 }
