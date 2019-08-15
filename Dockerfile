@@ -1,6 +1,7 @@
 FROM golang:1.12.8 as builder
 WORKDIR /go/src/github.com/hugobcar/tiamat
 ADD . /go/src/github.com/hugobcar/tiamat
+RUN GO111MODULE=on go mod vendor
 RUN CGO_ENABLED=0 go build -o tiamat
 
 FROM alpine:3.10.1
