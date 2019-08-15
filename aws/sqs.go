@@ -14,14 +14,17 @@ const (
 	msgsInQueueMetricName                 = "msgsInQueue"
 )
 
+// SQSColector - SQSClient struct using pointer
 type SQSColector struct {
 	cli *SQSClient
 }
 
+// SQSClient - AWS struct
 type SQSClient struct {
 	*AWS
 }
 
+// GetMetrics - Used to get metrics (number msgs in queue) in SQS
 func (s *SQSColector) GetMetrics(awsKey, awsSecret, awsRegion, queue string) (float64, error) {
 	n, err := s.getNumberOfMsgsInQueue(awsKey, awsSecret, awsRegion, queue)
 	if err != nil {
@@ -34,9 +37,9 @@ func (s *SQSColector) GetMetrics(awsKey, awsSecret, awsRegion, queue string) (fl
 }
 
 func (s *SQSColector) getNumberOfMsgsInQueue(awsKey, awsSecret, awsRegion, queueURL string) (int, error) {
-	c := NewSQSClient(awsKey, awsSecret, awsRegion)
+	c := newSQSClient(awsKey, awsSecret, awsRegion)
 
-	attrs, err := c.GetQueueAttributes(
+	attrs, err := c.getQueueAttributes(
 		queueURL,
 		numberOfMessagesInQueueAttrName,
 		numberOfMessagesInFlightQueueAttrName,
@@ -55,7 +58,7 @@ func (s *SQSColector) getNumberOfMsgsInQueue(awsKey, awsSecret, awsRegion, queue
 	return visible + inFlight, nil
 }
 
-func (s *SQSClient) GetQueueAttributes(queueURL string, attributes ...string) (map[string]string, error) {
+func (s *SQSClient) getQueueAttributes(queueURL string, attributes ...string) (map[string]string, error) {
 	cli := sqs.New(session.New(), s.newConfig())
 
 	var attrList []*string
@@ -78,7 +81,7 @@ func (s *SQSClient) GetQueueAttributes(queueURL string, attributes ...string) (m
 	return result, nil
 }
 
-func NewSQSClient(key, secret, region string) *SQSClient {
+func newSQSClient(key, secret, region string) *SQSClient {
 	return &SQSClient{
 		AWS: &AWS{key: key, secret: secret, region: region},
 	}
