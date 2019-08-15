@@ -28,12 +28,11 @@ func main() {
 	awsRegion := os.Getenv("AWSREGION")
 
 	go prometheus.Run()
+	go prometheus.CreateGauges(queues)
 
 	r := make(chan result)
 
 	for {
-		go prometheus.CreateGauges(queues)
-
 		for _, url := range queues {
 			go run(awsKey, awsSecret, awsRegion, url, r)
 		}
