@@ -34,8 +34,8 @@ func CreateGauges(queues []string) {
 		}
 
 		g := prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "sqsmetrics",
-			Help: "k8s-export-prometheus-metrics-sqs export SQS metrics",
+			Name: "tiamat",
+			Help: "Used to export SQS metrics",
 			ConstLabels: prometheus.Labels{
 				"namespace":     "namespace",
 				"metric_type":   "SQS",
