@@ -19,9 +19,8 @@ func main() {
 	queues := []string{
 		"https://sqs.sa-east-1.amazonaws.com/739171219021/teste_ana",
 		"https://sqs.sa-east-1.amazonaws.com/739171219021/testehugo",
-		// "https://queue.amazonaws.com/DEV_IFOOD_PAYMENT_RECONCILIATION_MANAGE_OPS",
 	}
-	interval := 5
+	interval := 15
 
 	awsKey := os.Getenv("AWSKEY")
 	awsSecret := os.Getenv("AWSSECRET")
