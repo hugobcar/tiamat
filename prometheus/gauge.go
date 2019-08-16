@@ -37,7 +37,6 @@ func CreateGauges(queues []string) {
 			Name: "tiamat",
 			Help: "Used to export SQS metrics",
 			ConstLabels: prometheus.Labels{
-				"namespace":     "namespace",
 				"metric_type":   "SQS",
 				"queue_region":  queueRegion,
 				"queue_account": queueAccount,

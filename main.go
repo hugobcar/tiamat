@@ -1,7 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/hugobcar/tiamat/aws"
@@ -15,16 +19,28 @@ type result struct {
 	totalMsg  float64
 }
 
+type config struct {
+	Region   string   `json:"region"`
+	Queues   []string `json:"queue_urls"`
+	Interval string   `json:"interval"`
+}
+
 func main() {
-	queues := []string{
-		"https://sqs.sa-east-1.amazonaws.com/739171219021/teste_ana",
-		"https://sqs.sa-east-1.amazonaws.com/739171219021/testehugo",
-	}
-	interval := 15
+	var configStruct config
+
+	file, _ := ioutil.ReadFile("config.json")
+	_ = json.Unmarshal([]byte(file), &configStruct)
 
 	awsKey := os.Getenv("AWSKEY")
 	awsSecret := os.Getenv("AWSSECRET")
-	awsRegion := os.Getenv("AWSREGION")
+	awsRegion := configStruct.Region
+	queues := configStruct.Queues
+
+	interval, err := strconv.Atoi(configStruct.Interval)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(2)
+	}
 
 	go prometheus.Run()
 	go prometheus.CreateGauges(queues)
