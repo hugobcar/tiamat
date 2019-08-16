@@ -49,18 +49,21 @@ func main() {
 
 	r := make(chan result)
 
-	wg.Add(10)
-
 	for {
+		wg.Add(len(queues))
+
+		var ini time.Time
+		ini = time.Now()
 
 		for _, url := range queues {
 			go run(awsKey, awsSecret, awsRegion, url, r)
 		}
 
-		time.Sleep(time.Duration(interval) * time.Second)
-
 		wg.Wait()
-		fmt.Println("Done")
+
+		fmt.Println("(Duration time to get total messages in SQS: ", time.Since(ini).Seconds(), "seconds)")
+
+		time.Sleep(time.Duration(interval) * time.Second)
 	}
 }
 
@@ -79,7 +82,6 @@ func run(awsKey, awsSecret, awsRegion, url string, rchan chan result) {
 
 	prometheus.RegistredGauges[url].Set(t)
 
-	rchan <- r
-
 	wg.Done()
+	rchan <- r
 }
