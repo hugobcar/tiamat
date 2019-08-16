@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/hugobcar/tiamat/aws"
@@ -13,6 +14,7 @@ import (
 )
 
 var s *aws.SQSColector
+var wg sync.WaitGroup
 
 type result struct {
 	queueName string
@@ -47,12 +49,18 @@ func main() {
 
 	r := make(chan result)
 
+	wg.Add(10)
+
 	for {
+
 		for _, url := range queues {
 			go run(awsKey, awsSecret, awsRegion, url, r)
 		}
 
 		time.Sleep(time.Duration(interval) * time.Second)
+
+		wg.Wait()
+		fmt.Println("Done")
 	}
 }
 
@@ -72,4 +80,6 @@ func run(awsKey, awsSecret, awsRegion, url string, rchan chan result) {
 	prometheus.RegistredGauges[url].Set(t)
 
 	rchan <- r
+
+	wg.Done()
 }
