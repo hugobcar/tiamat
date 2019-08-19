@@ -22,7 +22,7 @@ func init() {
 func CreateGauges(queues []string) {
 	for _, queue := range queues {
 		queueSplit := strings.Split(queue, "/")
-		queueRegionSplit := strings.Split(queueSplit[2], ".")
+		queueRegionSplit := strings.Split(strings.ReplaceAll(queueSplit[2], "sqs.", ""), ".")
 		queueRegion := queueRegionSplit[0]
 		queueAccount := queueSplit[3]
 		queueName := queueSplit[4]
