@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -27,6 +29,14 @@ type config struct {
 	FormatGaugeName bool     `json:"format_gauge_name"`
 }
 
+func checkEmptyVariable(name, variable string) {
+	if variable == "0" || len(strings.TrimSpace(variable)) == 0 {
+		fmt.Println("Please set " + name)
+
+		os.Exit(2)
+	}
+}
+
 func main() {
 	var configStruct config
 
@@ -39,6 +49,13 @@ func main() {
 	queues := configStruct.Queues
 	interval := configStruct.Interval
 	formatGaugeName := configStruct.FormatGaugeName
+
+	// Test empty confs variables
+	checkEmptyVariable("secret AWSKEY", awsKey)
+	checkEmptyVariable("secret AWSSECRET", awsSecret)
+	checkEmptyVariable("configMap value: region", awsRegion)
+	checkEmptyVariable("configMap value: queue_urls", strconv.Itoa(len(queues)))
+	checkEmptyVariable("configMap value: interval", strconv.Itoa(interval))
 
 	go prometheus.Run()
 	go prometheus.CreateGauges(queues, formatGaugeName)
