@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strconv"
 	"sync"
 	"time"
 
@@ -22,9 +21,10 @@ type result struct {
 }
 
 type config struct {
-	Region   string   `json:"region"`
-	Queues   []string `json:"queue_urls"`
-	Interval string   `json:"interval"`
+	Region          string   `json:"region"`
+	Queues          []string `json:"queue_urls"`
+	Interval        int      `json:"interval"`
+	FormatGaugeName bool     `json:"format_gauge_name"`
 }
 
 func main() {
@@ -37,15 +37,11 @@ func main() {
 	awsSecret := os.Getenv("AWSSECRET")
 	awsRegion := configStruct.Region
 	queues := configStruct.Queues
-
-	interval, err := strconv.Atoi(configStruct.Interval)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(2)
-	}
+	interval := configStruct.Interval
+	formatGaugeName := configStruct.FormatGaugeName
 
 	go prometheus.Run()
-	go prometheus.CreateGauges(queues)
+	go prometheus.CreateGauges(queues, formatGaugeName)
 
 	r := make(chan result)
 

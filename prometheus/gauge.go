@@ -19,7 +19,7 @@ func init() {
 }
 
 // CreateGauges - Create Gauges in Prometheus
-func CreateGauges(queues []string) {
+func CreateGauges(queues []string, formatGaugeName bool) {
 	for _, queue := range queues {
 		queueSplit := strings.Split(queue, "/")
 		queueRegionSplit := strings.Split(strings.ReplaceAll(queueSplit[2], "sqs.", ""), ".")
@@ -33,8 +33,14 @@ func CreateGauges(queues []string) {
 			fmt.Println(g)
 		}
 
+		var gName = "tiamat"
+
+		if formatGaugeName {
+			gName = fmt.Sprintf("tiamat_%s_%s", queueAccount, queueName)
+		}
+
 		g := prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: "tiamat",
+			Name: gName,
 			Help: "Used to export SQS metrics",
 			ConstLabels: prometheus.Labels{
 				"metric_type":   "SQS",
