@@ -36,7 +36,7 @@ $ kubectl get --raw /apis/external.metrics.k8s.io/v1beta1 | jq
   "groupVersion": "external.metrics.k8s.io/v1beta1",
   "resources": [
     {
-      "name": "tiamat_123456789012_queue1",
+      "name": "tiamat_123456789012_sqs_queue1",
       "singularName": "",
       "namespaced": true,
       "kind": "ExternalMetricValueList",
@@ -45,7 +45,7 @@ $ kubectl get --raw /apis/external.metrics.k8s.io/v1beta1 | jq
       ]
     },
     {
-      "name": "tiamat_123456789012_queue2",
+      "name": "tiamat_123456789012_sqs_queue2",
       "singularName": "",
       "namespaced": true,
       "kind": "ExternalMetricValueList",
@@ -58,18 +58,18 @@ $ kubectl get --raw /apis/external.metrics.k8s.io/v1beta1 | jq
 ```
 
 ```shell
-$ kubectl get --raw /apis/external.metrics.k8s.io/v1beta1/namespaces/*/tiamat_123456789012_queue1 | jq .
+$ kubectl get --raw /apis/external.metrics.k8s.io/v1beta1/namespaces/*/tiamat_123456789012_sqs_queue1 | jq .
 {
   "kind": "ExternalMetricValueList",
   "apiVersion": "external.metrics.k8s.io/v1beta1",
   "metadata": {
-    "selfLink": "/apis/external.metrics.k8s.io/v1beta1/namespaces/%2A/tiamat_123456789012_queue1"
+    "selfLink": "/apis/external.metrics.k8s.io/v1beta1/namespaces/%2A/tiamat_123456789012_sqs_queue1"
   },
   "items": [
     {
-      "metricName": "tiamat_123456789012_queue1",
+      "metricName": "tiamat_123456789012_sqs_queue1",
       "metricLabels": {
-        "__name__": "tiamat_123456789012_queue1",
+        "__name__": "tiamat_123456789012__sqs_queue1",
         "endpoint": "tiamat",
         "instance": "100.XXX.XXX.XXX:5000",
         "job": "tiamat",
@@ -111,6 +111,6 @@ spec:
       targetAverageUtilization: 75
   - type: External
     external:
-      metricName: tiamat_123456789012_queue1
+      metricName: tiamat_123456789012_sqs_queue1
       targetValue: 500
 ```

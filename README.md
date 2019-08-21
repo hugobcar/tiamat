@@ -81,11 +81,11 @@ Ex. `format_gauge_name: true`:
 .
 .
 .
-# HELP tiamat_123456789012_queue1 Used to export SQS metrics
-# TYPE tiamat_123456789012_queue1 gauge
-tiamat_123456789012_queue1{metric_type="SQS",queue_account="123456789012",queue_name="queue1",queue_region="sa-east-1",queue_url="https://sqs.sa-east-1.amazonaws.com/739171219021/queue1"} 341547
-# HELP tiamat_123456789012_queue2 Used to export SQS metrics
-# TYPE tiamat_123456789012_queue2 gauge
+# HELP tiamat_123456789012_sqs_queue1 Used to export SQS metrics
+# TYPE tiamat_123456789012_sqs_queue1 gauge
+tiamat_123456789012_sqs_queue1{metric_type="SQS",queue_account="123456789012",queue_name="queue1",queue_region="sa-east-1",queue_url="https://sqs.sa-east-1.amazonaws.com/739171219021/queue1"} 341547
+# HELP tiamat_123456789012_sqs_queue2 Used to export SQS metrics
+# TYPE tiamat_123456789012_sqs_queue2 gauge
 tiamat_123456789012_queue2{metric_type="SQS",queue_account="123456789012",queue_name="queue2",queue_region="sa-east-1",queue_url="https://sqs.sa-east-1.amazonaws.com/739171219021/queue2"} 110
 ```
 
