@@ -16,10 +16,11 @@ import (
 
 var s *aws.SQSColector
 var wg sync.WaitGroup
+var r result
 
 type result struct {
-	queueName string
-	totalMsg  float64
+	totalFailed  int
+	totalSuccess int
 }
 
 type config struct {
@@ -74,8 +75,6 @@ func main() {
 	go prometheus.Run()
 	go prometheus.CreateGauges(queues, formatGaugeName, metricType)
 
-	r := make(chan result)
-
 	for {
 		wg.Add(len(queues))
 
@@ -83,32 +82,32 @@ func main() {
 		ini = time.Now()
 
 		for _, url := range queues {
-			go run(awsKey, awsSecret, awsRegion, url, r)
+			r.totalFailed = 0
+			r.totalSuccess = 0
+
+			go run(awsKey, awsSecret, awsRegion, url)
 		}
 
 		wg.Wait()
 
-		fmt.Println("(Duration time to get total messages in SQS: ", time.Since(ini).Seconds(), "seconds)")
+		fmt.Println("(Duration time to get total messages in SQS:", time.Since(ini).Seconds(), "seconds)")
+		fmt.Println("(Total:", len(queues), "- Success:", r.totalSuccess, " - Failed:", r.totalFailed, ")")
 
 		time.Sleep(time.Duration(interval) * time.Second)
 	}
 }
 
-func run(awsKey, awsSecret, awsRegion, url string, rchan chan result) {
-	defer close(rchan)
-
-	var r result
-
+func run(awsKey, awsSecret, awsRegion, url string) {
 	t, err := s.GetMetrics(awsKey, awsSecret, awsRegion, url)
 	if err != nil {
 		t = -1
-	}
 
-	r.totalMsg = t
-	r.queueName = url
+		r.totalFailed = r.totalFailed + 1
+	} else {
+		r.totalSuccess = r.totalSuccess + 1
+	}
 
 	prometheus.RegistredGauges[url].Set(t)
 
 	wg.Done()
-	rchan <- r
 }
