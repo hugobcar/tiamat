@@ -9,7 +9,8 @@ Installation
 -------------
 I use namespace `monitoring`, but this is optional.
 
-### Creating the secret. Necessary AWS Key and Secret.
+### Creating the secret. 
+Is necessary getting AWS Key and Secret.
 
 ```shell
 $ read awskey
@@ -163,4 +164,31 @@ subjects:
 
 ```shell
 $ kubectl apply -f deployment.yaml
+```
+
+### Creating the service.
+service.yaml
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    release: prometheus-operator
+    run: tiamat
+  name: tiamat
+  namespace: monitoring
+spec:
+  ports:
+  - name: tiamat
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    run: tiamat
+  sessionAffinity: None
+  type: ClusterIP
+```
+
+```shell
+$ kubectl apply -f service.yaml
 ```
