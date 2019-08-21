@@ -27,11 +27,20 @@ type config struct {
 	Queues          []string `json:"queue_urls"`
 	Interval        int      `json:"interval"`
 	FormatGaugeName bool     `json:"format_gauge_name"`
+	MetricType      string   `json:"metric_type"`
 }
 
 func checkEmptyVariable(name, variable string) {
 	if variable == "0" || len(strings.TrimSpace(variable)) == 0 {
-		fmt.Println("Please set " + name)
+		fmt.Printf("Please set %s", name)
+
+		os.Exit(2)
+	}
+}
+
+func validMetricType(variable string) {
+	if variable != "sqs" {
+		fmt.Printf("Metric type (%s) is invalid!", variable)
 
 		os.Exit(2)
 	}
@@ -49,6 +58,7 @@ func main() {
 	queues := configStruct.Queues
 	interval := configStruct.Interval
 	formatGaugeName := configStruct.FormatGaugeName
+	metricType := configStruct.MetricType
 
 	// Test empty confs variables
 	checkEmptyVariable("secret AWSKEY", awsKey)
@@ -56,9 +66,13 @@ func main() {
 	checkEmptyVariable("configMap value: region", awsRegion)
 	checkEmptyVariable("configMap value: queue_urls", strconv.Itoa(len(queues)))
 	checkEmptyVariable("configMap value: interval", strconv.Itoa(interval))
+	checkEmptyVariable("configMap value: metric_type", metricType)
+
+	// Check Metric type
+	validMetricType(metricType)
 
 	go prometheus.Run()
-	go prometheus.CreateGauges(queues, formatGaugeName)
+	go prometheus.CreateGauges(queues, formatGaugeName, metricType)
 
 	r := make(chan result)
 
