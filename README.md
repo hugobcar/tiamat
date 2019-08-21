@@ -1,7 +1,7 @@
 # Tiamat
 Is used to export one ou more SQS queues metrics to Prometheus. This metrics can be used with [k8s-prometheus-adapter](https://github.com/DirectXMan12/k8s-prometheus-adapter "prometheus-adapter") to scaling pods k8s (HPA). 
 
-Read [docs/k8s-prometheus-adapter.md](docs/k8s-prometheus-adapter.md "docs/k8s-prometheus-adapter.md") for more informations to use with k8s-prometheus-adapter.
+Read [docs/k8s-prometheus-adapter](docs/k8s-prometheus-adapter "docs/k8s-prometheus-adapter") for more informations to use with k8s-prometheus-adapter.
 ![image](https://user-images.githubusercontent.com/10134807/63375165-a04aa000-c361-11e9-854a-be3729fbc0ea.png)
 
 
