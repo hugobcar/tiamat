@@ -57,6 +57,7 @@ data:
         "interval": 10,
         "region": "sa-east-1",
         "format_gauge_name": true,
+        "metric_type": "sqs",
         "queue_urls": [
             "https://sqs.sa-east-1.amazonaws.com/123456789012/queue1",
             "https://sqs.sa-east-1.amazonaws.com/123456789012/queue2"
