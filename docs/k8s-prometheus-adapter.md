@@ -36,7 +36,7 @@ $ kubectl get --raw /apis/external.metrics.k8s.io/v1beta1 | jq
   "groupVersion": "external.metrics.k8s.io/v1beta1",
   "resources": [
     {
-	  "name": "tiamat_123456789012_queue1",
+      "name": "tiamat_123456789012_queue1",
       "singularName": "",
       "namespaced": true,
       "kind": "ExternalMetricValueList",

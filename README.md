@@ -1,8 +1,11 @@
 # Tiamat
-Is used to export one ou more SQS queues metrics to Prometheus. This metrics can be used with [k8s-prometheus-adapter](https://github.com/DirectXMan12/k8s-prometheus-adapter "prometheus-adapter") to scaling pods k8s (HPA). 
+Is used to export one ou more SQS queues metrics to Prometheus. This metrics can be used with [k8s-prometheus-adapter](https://github.com/DirectXMan12/k8s-prometheus-adapter "k8s-prometheus-adapter") to scaling pods k8s (HPA). 
 
 Read [docs/k8s-prometheus-adapter.md](docs/k8s-prometheus-adapter.md "docs/k8s-prometheus-adapter.md") for more informations to use with k8s-prometheus-adapter.
 ![image](https://user-images.githubusercontent.com/10134807/63375165-a04aa000-c361-11e9-854a-be3729fbc0ea.png)
+
+### Why use?
+Currently exist some tools to getting SQS metrics, for example [CloudWatch Exporter](https://github.com/prometheus/cloudwatch_exporter "CloudWatch Exporter"). But it has a long delay of 10 minutes to getting SQS metrics.
 
 
 Installation
