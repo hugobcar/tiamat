@@ -88,3 +88,29 @@ $ kubectl get --raw /apis/external.metrics.k8s.io/v1beta1/namespaces/*/tiamat_12
   ]
 }
 ```
+
+Example scaling metrics CPU and SQS (timat):
+
+```yaml
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: app
+  namespace: app
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: app
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 75
+  - type: External
+    external:
+      metricName: tiamat_123456789012_queue1
+      targetValue: 500
+```
