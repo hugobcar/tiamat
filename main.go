@@ -32,8 +32,8 @@ type config struct {
 }
 
 func checkEmptyVariable(name, variable string) {
-	if variable == "0" || len(strings.TrimSpace(variable)) == 0 {
-		fmt.Printf("Please set %s", name)
+	if len(strings.TrimSpace(variable)) == 0 {
+		fmt.Printf("Please, set %s", name)
 
 		os.Exit(2)
 	}
@@ -65,7 +65,6 @@ func main() {
 	checkEmptyVariable("secret AWSKEY", awsKey)
 	checkEmptyVariable("secret AWSSECRET", awsSecret)
 	checkEmptyVariable("configMap value: region", awsRegion)
-	checkEmptyVariable("configMap value: queue_urls", strconv.Itoa(len(queues)))
 	checkEmptyVariable("configMap value: interval", strconv.Itoa(interval))
 	checkEmptyVariable("configMap value: metric_type", metricType)
 
@@ -81,17 +80,21 @@ func main() {
 		var ini time.Time
 		ini = time.Now()
 
-		for _, url := range queues {
-			r.totalFailed = 0
-			r.totalSuccess = 0
+		if len(queues) == 0 {
+			fmt.Println("Please, set url queue in configMap...")
+		} else {
+			for _, url := range queues {
+				r.totalFailed = 0
+				r.totalSuccess = 0
 
-			go run(awsKey, awsSecret, awsRegion, url)
+				go run(awsKey, awsSecret, awsRegion, url)
+			}
+
+			wg.Wait()
+
+			fmt.Println("(Duration time to get total messages in SQS:", time.Since(ini).Seconds(), "seconds)")
+			fmt.Println("(Total:", len(queues), "- Success:", r.totalSuccess, " - Failed:", r.totalFailed, ")")
 		}
-
-		wg.Wait()
-
-		fmt.Println("(Duration time to get total messages in SQS:", time.Since(ini).Seconds(), "seconds)")
-		fmt.Println("(Total:", len(queues), "- Success:", r.totalSuccess, " - Failed:", r.totalFailed, ")")
 
 		time.Sleep(time.Duration(interval) * time.Second)
 	}
