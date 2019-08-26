@@ -115,4 +115,4 @@ spec:
       targetValue: 500
 ```
 
-Note: The `-` characters in queue names will be replaced by` _`.
+**Note:** The `-` characters in queue names will be replaced by` _`.
