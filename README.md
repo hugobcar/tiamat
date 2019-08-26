@@ -75,7 +75,7 @@ $ kubectl apply -f configmap_tiamat.yaml
 
 - `interval` - Interval to getting queues metrics (in seconds).
 - `region` - Location SQS Region.
-- `format_gauge_name` - If is `true` the gauge names are reports in format: `tiamat_<aws_account_id>_<queue_name>`.  Default return `tiamat` for all the gauge names. **Note**: The `-` characters in queue names will be replaced by` _` and the queues names are converted in lowercase.
+- `format_gauge_name` - If is `true` the gauge names are reports in format: `tiamat_<aws_account_id>_sqs_<queue_name>`.  Default return `tiamat` for all the gauge names. **Note**: The `-` characters in queue names will be replaced by` _` and the queues names are converted in lowercase.
 
 Ex. `format_gauge_name: true`:
 ```
