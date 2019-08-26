@@ -25,7 +25,7 @@ func CreateGauges(queues []string, formatGaugeName bool, metricType string) {
 		queueRegionSplit := strings.Split(strings.ReplaceAll(queueSplit[2], "sqs.", ""), ".")
 		queueRegion := queueRegionSplit[0]
 		queueAccount := queueSplit[3]
-		queueName := queueSplit[4]
+		queueName := strings.ReplaceAll(queueSplit[4], "-", "_")
 
 		gID := fmt.Sprintf(queue)
 
