@@ -5,7 +5,7 @@ Read [docs/k8s-prometheus-adapter.md](docs/k8s-prometheus-adapter.md "docs/k8s-p
 ![image](https://user-images.githubusercontent.com/10134807/63375165-a04aa000-c361-11e9-854a-be3729fbc0ea.png)
 
 ### Why use?
-Currently exist some tools to getting SQS metrics, for example [CloudWatch Exporter](https://github.com/prometheus/cloudwatch_exporter "CloudWatch Exporter"). But it has a long delay of 10 minutes to getting SQS metrics.
+Currently exist some tools to getting SQS metrics, for example [CloudWatch Exporter](https://github.com/prometheus/cloudwatch_exporter "CloudWatch Exporter"). But it has a long delay of 5~10 minutes to getting SQS metrics.
 
 
 Installation
