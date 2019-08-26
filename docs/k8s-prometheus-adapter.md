@@ -114,3 +114,5 @@ spec:
       metricName: tiamat_123456789012_sqs_queue1
       targetValue: 500
 ```
+
+Note: The `-` characters in queue names will be replaced by` _`.
