@@ -58,6 +58,7 @@ data:
         "region": "sa-east-1",
         "format_gauge_name": true,
         "metric_type": "sqs",
+        "logs_enabled": true,
         "queue_urls": [
             "https://sqs.sa-east-1.amazonaws.com/123456789012/queue1",
             "https://sqs.sa-east-1.amazonaws.com/123456789012/queue2"
@@ -90,6 +91,7 @@ tiamat_123456789012_sqs_queue1{metric_type="sqs",queue_account="123456789012",qu
 tiamat_123456789012_sqs_queue2{metric_type="sqs",queue_account="123456789012",queue_name="queue2",queue_region="sa-east-1",queue_url="https://sqs.sa-east-1.amazonaws.com/739171219021/queue2"} 110
 ```
 - `metric_type` - In this moment is possible getting 'sqs' metrics, but in the future it will be possible to set others metrics (redis, dynamodb...).
+- `logs_enabled` - If is `true` logs are disabled. Default is `false`.
 
 ### Deploying Tiamat.
 deployment.yaml
