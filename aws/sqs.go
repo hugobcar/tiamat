@@ -25,13 +25,15 @@ type SQSClient struct {
 }
 
 // GetMetrics - Used to get metrics (number msgs in queue) in SQS
-func (s *SQSColector) GetMetrics(awsKey, awsSecret, awsRegion, queue string) (float64, error) {
+func (s *SQSColector) GetMetrics(awsKey, awsSecret, awsRegion, queue string, logs bool) (float64, error) {
 	n, err := s.getNumberOfMsgsInQueue(awsKey, awsSecret, awsRegion, queue)
 	if err != nil {
 		return 0, err
 	}
 
-	log.Printf("Messages in Queue (%s): %d\n", queue, n)
+	if logs {
+		log.Printf("Messages in Queue (%s): %d\n", queue, n)
+	}
 
 	return float64(n), nil
 }

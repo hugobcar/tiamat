@@ -29,6 +29,7 @@ type config struct {
 	Interval        int      `json:"interval"`
 	FormatGaugeName bool     `json:"format_gauge_name"`
 	MetricType      string   `json:"metric_type"`
+	LogsEnabled     bool     `json:"logs_enabled"`
 }
 
 func checkEmptyVariable(name, variable string) {
@@ -60,6 +61,7 @@ func main() {
 	interval := configStruct.Interval
 	formatGaugeName := configStruct.FormatGaugeName
 	metricType := configStruct.MetricType
+	logsEnabled := configStruct.LogsEnabled
 
 	// Test empty confs variables
 	checkEmptyVariable("secret AWSKEY", awsKey)
@@ -74,6 +76,10 @@ func main() {
 	go prometheus.Run()
 	go prometheus.CreateGauges(queues, formatGaugeName, metricType)
 
+	if !logsEnabled {
+		fmt.Println("Logs are disabled in configMap!")
+	}
+
 	for {
 		wg.Add(len(queues))
 
@@ -81,27 +87,31 @@ func main() {
 		ini = time.Now()
 
 		if len(queues) == 0 {
-			fmt.Println("Please, set url queue in configMap...")
+			if logsEnabled {
+				fmt.Println("Please, set url queue in configMap...")
+			}
 		} else {
 			for _, url := range queues {
 				r.totalFailed = 0
 				r.totalSuccess = 0
 
-				go run(awsKey, awsSecret, awsRegion, url)
+				go run(awsKey, awsSecret, awsRegion, url, logsEnabled)
 			}
 
 			wg.Wait()
 
-			fmt.Println("(Duration time to get total messages in SQS:", time.Since(ini).Seconds(), "seconds)")
-			fmt.Println("(Total:", len(queues), "- Success:", r.totalSuccess, " - Failed:", r.totalFailed, ")")
+			if logsEnabled {
+				fmt.Println("(Duration time to get total messages in SQS:", time.Since(ini).Seconds(), "seconds)")
+				fmt.Println("(Total:", len(queues), "- Success:", r.totalSuccess, " - Failed:", r.totalFailed, ")")
+			}
 		}
 
 		time.Sleep(time.Duration(interval) * time.Second)
 	}
 }
 
-func run(awsKey, awsSecret, awsRegion, url string) {
-	t, err := s.GetMetrics(awsKey, awsSecret, awsRegion, url)
+func run(awsKey, awsSecret, awsRegion, url string, logs bool) {
+	t, err := s.GetMetrics(awsKey, awsSecret, awsRegion, url, logs)
 	if err != nil {
 		t = -1
 
