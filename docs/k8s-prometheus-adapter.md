@@ -1,5 +1,5 @@
 # Prometheus Adapter for Kubernetes Metrics APIs with tiamat SQS metrics.
-I presumed that you instaled k8s-prometheus-adapter (https://github.com/DirectXMan12/k8s-prometheus-adapter) and you install tiamat.
+I presumed that you installed k8s-prometheus-adapter (https://github.com/DirectXMan12/k8s-prometheus-adapter) and you install tiamat.
 
 Your prometheus should is getting tiamat metrics.
 
