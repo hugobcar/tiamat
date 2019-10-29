@@ -83,12 +83,15 @@ Ex. `format_gauge_name: true`:
 .
 .
 .
-# HELP tiamat_123456789012_sqs_queue1 Used to export SQS metrics
-# TYPE tiamat_123456789012_sqs_queue1 gauge
-tiamat_123456789012_sqs_queue1{metric_type="sqs",queue_account="123456789012",queue_name="queue1",queue_region="sa-east-1",queue_url="https://sqs.sa-east-1.amazonaws.com/739171219021/queue1"} 341547
-# HELP tiamat_123456789012_sqs_queue2 Used to export SQS metrics
-# TYPE tiamat_123456789012_sqs_queue2 gauge
-tiamat_123456789012_sqs_queue2{metric_type="sqs",queue_account="123456789012",queue_name="queue2",queue_region="sa-east-1",queue_url="https://sqs.sa-east-1.amazonaws.com/739171219021/queue2"} 110
+# HELP tiamat_123456789012_sqs_queue1_total SQS Total Messages metrics
+# TYPE tiamat_123456789012_sqs_queue1_total gauge
+tiamat_123456789012_sqs_queue1_total{metric_type="sqs",queue_account="123456789012",queue_name="queue1",queue_region="sa-east-1",queue_url="https://sqs.sa-east-1.amazonaws.com/739171219021/queue1"} 341547
+# HELP tiamat_123456789012_sqs_queue1_visible SQS Visible Messages metrics
+# TYPE tiamat_123456789012_sqs_queue1_visible gauge
+tiamat_123456789012_sqs_queue1_visible{metric_type="sqs",queue_account="123456789012",queue_name="queue1",queue_region="sa-east-1",queue_url="https://sqs.sa-east-1.amazonaws.com/739171219021/queue1"} 302473
+# HELP tiamat_123456789012_sqs_queue1_in_flight SQS In Fight Messages metrics
+# TYPE tiamat_123456789012_sqs_queue1_in_flight gauge
+tiamat_123456789012_sqs_queue1_in_flight{metric_type="sqs",queue_account="123456789012",queue_name="queue1",queue_region="sa-east-1",queue_url="https://sqs.sa-east-1.amazonaws.com/739171219021/queue1"} 1253
 ```
 - `metric_type` - In this moment is possible getting 'sqs' metrics, but in the future it will be possible to set others metrics (redis, dynamodb...).
 - `logs_enabled` - If is `true` logs are disabled. Default is `false`.
