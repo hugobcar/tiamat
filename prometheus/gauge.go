@@ -27,31 +27,42 @@ func CreateGauges(queues []string, formatGaugeName bool, metricType string) {
 		queueAccount := queueSplit[3]
 		queueName := strings.ToLower(strings.ReplaceAll(queueSplit[4], "-", "_"))
 
-		gID := fmt.Sprintf(queue)
-
-		if g, found := RegistredGauges[gID]; found {
-			fmt.Println(g)
-		}
-
-		var gName = "tiamat"
-
+		var gPrefix = "tiamat"
 		if formatGaugeName {
-			gName = fmt.Sprintf("tiamat_%s_%s_%s", queueAccount, metricType, queueName)
+			gPrefix = fmt.Sprintf("tiamat_%s_%s_%s", queueAccount, metricType, queueName)
 		}
 
-		g := prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: gName,
-			Help: "Used to export SQS metrics",
-			ConstLabels: prometheus.Labels{
-				"metric_type":   metricType,
-				"queue_region":  queueRegion,
-				"queue_account": queueAccount,
-				"queue_name":    queueName,
-				"queue_url":     queue,
-			},
-		})
-		prometheus.Register(g)
-		RegistredGauges[gID] = g
+		gTotal := fmt.Sprintf("%s_total", gPrefix)
+		gTotalName := fmt.Sprintf("%s_total", queue)
 
+		gVisible := fmt.Sprintf("%s_visible", gPrefix)
+		gVisibleName := fmt.Sprintf("%s_visible", queue)
+
+		gInFlight := fmt.Sprintf("%s_in_flight", gPrefix)
+		gInFlightName := fmt.Sprintf("%s_in_flight", queue)
+
+		defaultLabels := prometheus.Labels{
+			"metric_type":   metricType,
+			"queue_region":  queueRegion,
+			"queue_account": queueAccount,
+			"queue_name":    queueName,
+			"queue_url":     queue,
+		}
+
+		registerGuage(gTotalName,gTotal, defaultLabels, "SQS Total Messages metrics")
+		registerGuage(gVisibleName,gVisible, defaultLabels, "SQS Visible Messages metrics")
+		registerGuage(gInFlightName,gInFlight, defaultLabels, "SQS In Fight Messages metrics")
 	}
+}
+
+func registerGuage(name , metric string, labels prometheus.Labels, help string)  {
+	gID := fmt.Sprintf(name)
+
+	if g, found := RegistredGauges[gID]; found {
+		fmt.Println(g)
+	}
+
+	g := prometheus.NewGauge(prometheus.GaugeOpts{Name: metric, Help: help, ConstLabels: labels})
+	prometheus.Register(g)
+	RegistredGauges[gID] = g
 }

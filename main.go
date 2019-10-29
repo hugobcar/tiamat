@@ -113,14 +113,15 @@ func main() {
 func run(awsKey, awsSecret, awsRegion, url string, logs bool) {
 	t, err := s.GetMetrics(awsKey, awsSecret, awsRegion, url, logs)
 	if err != nil {
-		t = -1
-
-		r.totalFailed = r.totalFailed + 1
+		prometheus.RegistredGauges[url].Set(-1)
+		r.totalFailed += 1
 	} else {
-		r.totalSuccess = r.totalSuccess + 1
+		r.totalSuccess += 1
 	}
 
-	prometheus.RegistredGauges[url].Set(t)
+	prometheus.RegistredGauges[url + "_total"].Set(float64(t.TotalMessages()))
+	prometheus.RegistredGauges[url + "_visible"].Set(float64(t.Visible.Value))
+	prometheus.RegistredGauges[url + "_in_flight"].Set(float64(t.InFlight.Value))
 
 	wg.Done()
 }
