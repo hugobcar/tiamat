@@ -34,10 +34,6 @@ type Metric struct {
 	Value int
 }
 
-func (m SQSMetrics) NewSQSMetrics() SQSMetrics {
-	return SQSMetrics{Visible: Metric{Name: "Visible"}, InFlight: Metric{Name: "InFlight"}}
-}
-
 func (m SQSMetrics) TotalMessages() int {
 	return m.InFlight.Value + m.Visible.Value
 }
@@ -46,7 +42,7 @@ func (m SQSMetrics) TotalMessages() int {
 func (s *SQSColector) GetMetrics(awsKey, awsSecret, awsRegion, queue string, logs bool) (SQSMetrics, error) {
 	metrics, err := s.getNumberOfMsgsInQueue(awsKey, awsSecret, awsRegion, queue)
 	if err != nil {
-		return SQSMetrics{}, err
+		return metrics, err
 	}
 
 	if logs {
@@ -70,16 +66,24 @@ func (s *SQSColector) getNumberOfMsgsInQueue(awsKey, awsSecret, awsRegion, queue
 		return metrics, err
 	}
 
-	metrics.Visible.Value, err = strconv.Atoi(attrs[numberOfMessagesInQueueAttrName])
+	metrics.Visible.Value, err = readIntAttribute(attrs, numberOfMessagesInQueueAttrName)
 	if err != nil {
 		return metrics, err
 	}
 
-	metrics.InFlight.Value, err = strconv.Atoi(attrs[numberOfMessagesInFlightQueueAttrName])
+	metrics.InFlight.Value, err = readIntAttribute(attrs, numberOfMessagesInFlightQueueAttrName)
 	if err != nil {
 		return metrics, err
 	}
 	return metrics, nil
+}
+
+func readIntAttribute(attributes map[string]string, key string) (int, error) {
+	m, err := strconv.Atoi(attributes[key])
+	if err != nil {
+		return m, err
+	}
+	return m, nil
 }
 
 func (s *SQSClient) getQueueAttributes(queueURL string, attributes ...string) (map[string]string, error) {
