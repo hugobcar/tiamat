@@ -24,22 +24,38 @@ type SQSClient struct {
 	*AWS
 }
 
+type SQSMetrics struct {
+	Visible Metric
+	InFlight Metric
+}
+
+type Metric struct {
+	Name  string
+	Value int
+}
+
+func (m SQSMetrics) TotalMessages() int {
+	return m.InFlight.Value + m.Visible.Value
+}
+
 // GetMetrics - Used to get metrics (number msgs in queue) in SQS
-func (s *SQSColector) GetMetrics(awsKey, awsSecret, awsRegion, queue string, logs bool) (float64, error) {
-	n, err := s.getNumberOfMsgsInQueue(awsKey, awsSecret, awsRegion, queue)
+func (s *SQSColector) GetMetrics(awsKey, awsSecret, awsRegion, queue string, logs bool) (SQSMetrics, error) {
+	metrics, err := s.getNumberOfMsgsInQueue(awsKey, awsSecret, awsRegion, queue)
 	if err != nil {
-		return 0, err
+		return metrics, err
 	}
 
 	if logs {
-		log.Printf("Messages in Queue (%s): %d\n", queue, n)
+		log.Printf("Messages in Queue (%s): Visible: %d In Flight: %d Total: %d\n",
+			queue, metrics.Visible.Value, metrics.InFlight.Value, metrics.TotalMessages())
 	}
 
-	return float64(n), nil
+	return metrics, nil
 }
 
-func (s *SQSColector) getNumberOfMsgsInQueue(awsKey, awsSecret, awsRegion, queueURL string) (int, error) {
+func (s *SQSColector) getNumberOfMsgsInQueue(awsKey, awsSecret, awsRegion, queueURL string) (SQSMetrics, error) {
 	c := newSQSClient(awsKey, awsSecret, awsRegion)
+	metrics := SQSMetrics{}
 
 	attrs, err := c.getQueueAttributes(
 		queueURL,
@@ -47,17 +63,27 @@ func (s *SQSColector) getNumberOfMsgsInQueue(awsKey, awsSecret, awsRegion, queue
 		numberOfMessagesInFlightQueueAttrName,
 	)
 	if err != nil {
-		return -1, err
+		return metrics, err
 	}
-	visible, err := strconv.Atoi(attrs[numberOfMessagesInQueueAttrName])
+
+	metrics.Visible.Value, err = readIntAttribute(attrs, numberOfMessagesInQueueAttrName)
 	if err != nil {
-		return -1, err
+		return metrics, err
 	}
-	inFlight, err := strconv.Atoi(attrs[numberOfMessagesInFlightQueueAttrName])
+
+	metrics.InFlight.Value, err = readIntAttribute(attrs, numberOfMessagesInFlightQueueAttrName)
 	if err != nil {
-		return -1, err
+		return metrics, err
 	}
-	return visible + inFlight, nil
+	return metrics, nil
+}
+
+func readIntAttribute(attributes map[string]string, key string) (int, error) {
+	m, err := strconv.Atoi(attributes[key])
+	if err != nil {
+		return m, err
+	}
+	return m, nil
 }
 
 func (s *SQSClient) getQueueAttributes(queueURL string, attributes ...string) (map[string]string, error) {

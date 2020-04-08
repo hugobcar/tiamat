@@ -8,14 +8,28 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
+type QueueMetrics struct {
+	Name     string
+	Total    prometheus.Gauge
+	Visible  prometheus.Gauge
+	InFlight prometheus.Gauge
+	Legacy   prometheus.Gauge
+}
+
+const (
+	Total    = "total"
+	Visible  = "visible"
+	InFlight = "in_flight"
+)
+
 var (
 	mu              *sync.Mutex
-	RegistredGauges map[string]prometheus.Gauge
+	RegistredGauges map[string]QueueMetrics
 )
 
 func init() {
 	mu = new(sync.Mutex)
-	RegistredGauges = make(map[string]prometheus.Gauge)
+	RegistredGauges = make(map[string]QueueMetrics)
 }
 
 // CreateGauges - Create Gauges in Prometheus
@@ -27,31 +41,48 @@ func CreateGauges(queues []string, formatGaugeName bool, metricType string) {
 		queueAccount := queueSplit[3]
 		queueName := strings.ToLower(strings.ReplaceAll(queueSplit[4], "-", "_"))
 
-		gID := fmt.Sprintf(queue)
-
-		if g, found := RegistredGauges[gID]; found {
-			fmt.Println(g)
-		}
-
 		var gName = "tiamat"
-
 		if formatGaugeName {
 			gName = fmt.Sprintf("tiamat_%s_%s_%s", queueAccount, metricType, queueName)
 		}
 
-		g := prometheus.NewGauge(prometheus.GaugeOpts{
-			Name: gName,
-			Help: "Used to export SQS metrics",
-			ConstLabels: prometheus.Labels{
-				"metric_type":   metricType,
-				"queue_region":  queueRegion,
-				"queue_account": queueAccount,
-				"queue_name":    queueName,
-				"queue_url":     queue,
-			},
-		})
-		prometheus.Register(g)
-		RegistredGauges[gID] = g
+		defaultLabels := prometheus.Labels{
+			"metric_type":   metricType,
+			"queue_region":  queueRegion,
+			"queue_account": queueAccount,
+			"queue_name":    queueName,
+			"queue_url":     queue,
+		}
 
+		if g, found := RegistredGauges[queue]; found {
+			fmt.Println(g)
+		}
+
+		RegistredGauges[queue] = QueueMetrics{
+			Name:     gName,
+			Total:    RegisterGauge(gName, fmt.Sprintf("%s_%s", gName, Total), defaultLabels, "SQS Total Messages metrics"),
+			Visible:  RegisterGauge(gName, fmt.Sprintf("%s_%s", gName, Visible), defaultLabels, "SQS Visible Messages metrics"),
+			InFlight: RegisterGauge(gName, fmt.Sprintf("%s_%s", gName, InFlight), defaultLabels, "SQS In Fight Messages metrics"),
+			Legacy:   RegisterGauge(gName, gName, defaultLabels, "Legacy metric, use total metrics instead"),
+		}
 	}
+}
+
+// RegisterGauge -- register new prometheus guage metrics
+func RegisterGauge(name, metric string, labels prometheus.Labels, help string) prometheus.Gauge {
+	if g, found := RegistredGauges[name]; found {
+		fmt.Println(g)
+	}
+
+	g := prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name:        metric,
+			Help:        help,
+			ConstLabels: labels,
+		})
+
+	if err := prometheus.Register(g); err != nil {
+		fmt.Println(err)
+	}
+	return g
 }
