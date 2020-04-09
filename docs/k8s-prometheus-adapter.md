@@ -89,7 +89,7 @@ $ kubectl get --raw /apis/external.metrics.k8s.io/v1beta1/namespaces/*/tiamat_12
 }
 ```
 
-Example scaling metrics CPU and SQS (timat):
+Example scaling metrics CPU and SQS (tiamat):
 
 ```yaml
 apiVersion: autoscaling/v2beta1
