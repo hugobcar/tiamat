@@ -122,7 +122,7 @@ spec:
     spec:
       containers:
       - name: tiamat
-        image: ifoodhub/tiamat:0.0.1
+        image: hugobcar/tiamat:0.0.2
         ports:
             - containerPort: 5000
         imagePullPolicy: Always
