@@ -12,8 +12,26 @@ Installation
 -------------
 I use namespace `monitoring`, but this is optional.
 
-### Creating the secret. 
-Is necessary getting AWS Key and Secret.
+### AWS Permissions
+
+The following AWS policy is needed to use this program:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Id": "SQSTiamat",
+    "Statement": [
+        {
+            "Sid": "SQSTiamat",
+            "Effect": "Allow",
+            "Action": "sqs:GetQueueAttributes",
+            "Resource": "*"
+        }
+    ]
+}
+```
+
+If the program is running outside AWS and you don't have any configured credentials in the instance environment, you can set an AWS key and secret this way:
 
 ```shell
 $ read awskey
@@ -29,20 +47,10 @@ $ read awssecret
 $ kubectl -n monitoring create secret generic aws-tiamat --from-literal=key=$awskey --from-literal=secret=$awssecret
 ```
 
-AWS Policy:
-```json
-{
-    "Version": "2012-10-17",
-    "Id": "SQSTiamat",
-    "Statement": [
-        {
-            "Sid": "SQSTiamat",
-            "Effect": "Allow",
-            "Action": "sqs:GetQueueAttributes",
-            "Resource": "*"
-        }
-    ]
-}
+If the program is running inside an instance that already has an IAM role attached and you don't want to use explicit credentials, set the key and secret as empty by running:
+
+```shell
+$ kubectl -n monitoring create secret generic aws-tiamat --from-literal=key="" --from-literal=secret=""
 ```
 
 ### Creating configMap.
