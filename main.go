@@ -64,8 +64,9 @@ func main() {
 	logsEnabled := configStruct.LogsEnabled
 
 	// Test empty confs variables
-	checkEmptyVariable("secret AWSKEY", awsKey)
-	checkEmptyVariable("secret AWSSECRET", awsSecret)
+	if awsKey != "" {
+		checkEmptyVariable("secret AWSSECRET", awsSecret)
+	}
 	checkEmptyVariable("configMap value: region", awsRegion)
 	checkEmptyVariable("configMap value: interval", strconv.Itoa(interval))
 	checkEmptyVariable("configMap value: metric_type", metricType)

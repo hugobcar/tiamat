@@ -13,7 +13,15 @@ type AWS struct {
 }
 
 func (a *AWS) newConfig() *aws.Config {
-	return aws.NewConfig().WithCredentials(
-		credentials.NewStaticCredentials(a.key, a.secret, ""),
-	).WithRegion(a.region)
+	var config *aws.Config
+
+	if a.key == "" {
+		config = aws.NewConfig()
+	} else {
+		config = aws.NewConfig().WithCredentials(
+			credentials.NewStaticCredentials(a.key, a.secret, ""),
+		)
+	}
+
+	return config.WithRegion(a.region)
 }
