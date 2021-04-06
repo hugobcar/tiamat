@@ -5,7 +5,7 @@ Read [docs/k8s-prometheus-adapter.md](docs/k8s-prometheus-adapter.md "docs/k8s-p
 ![image](https://user-images.githubusercontent.com/10134807/64730080-e1435980-d4b4-11e9-8156-93d3312e1bfb.png)
 
 ### Why use?
-Currently exist some tools to getting SQS metrics, for example [CloudWatch Exporter](https://github.com/prometheus/cloudwatch_exporter "CloudWatch Exporter"). But it has a long delay of 5~10 minutes to getting SQS metrics.
+Currently exist some tools to getting SQS metrics, for example [CloudWatch Exporter](https://github.com/prometheus/cloudwatch_exporter "CloudWatch Exporter"). But it has a long delay of 5~10 minutes to getting SQS metrics and using Tiamat you can this metrics in some seconds.
 
 
 Installation
